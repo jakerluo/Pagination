@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
+    <style>
+        a {
+            margin-left: 10px;
+            margin-right: 10px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: none;
+        }
+
+        div {
+            padding: 10px;
+        }
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <p>demo0</p>
+    <div id="container0"></div>
+    <p>new Pagination({containerId: 'container0'});</p>
+    <div id="container3"></div>
+    <div id="container4"></div>
+    <div id="container5"></div>
+    <div id="container6"></div>
+    <hr>
+    <p>demo1</p>
+
+    <div id="container"></div>
+    <div id="container7"></div>
+    <div id="container8"></div>
+    <div id="container9"></div>
+    <p>
+        new Pagination({
+        containerId: 'container',
+        pageNum: '8',
+        totalNumber: '16',
+        rightSideNum:'3',
+        leftSideNum:'3',
+        pageNumLeft:'2',
+        pageNumRight:'2',
+        nextOrPrevSwitch:false,
+        homeSwitch:false,
+        onPageChangedCallback: function (num) {
+
+        }
+        });
+    </p>
+
+    <hr>
+
+    <p>demo2</p>
+
+    <div id="container1"></div>
+    <div id="container10"></div>
+    <div id="container11"></div>
+    <p> new Pagination({
+        containerId: 'container1',
+        pageNum: '7',
+        totalNumber: '12',
+        rightSideNum:'1',
+        leftSideNum:'1',
+        pageNumLeft:"0",
+        pageNumRight:"4",
+        homeSwitch:false,
+        onPageChangedCallback: function (num) {
+
+        }
+        });
+    </p>
+    <hr>
+
+    <p>demo3</p>
+    <div id="container2"></div>
+    <div id="container12"></div>
+    <div id="container13"></div>
+    <p> new Pagination({
+        containerId: 'container3',
+        pageNum: '7',
+        totalNumber: '12',
+        rightSideNum:'0',
+        leftSideNum:'0',
+        pageNumLeft:"3",
+        pageNumRight:"3",
+        onPageChangedCallback: function (num) {
+
+        }
+        });</p>
+
+    <table class="table table-bordered table-small">
+        <thead>
+        <tr>
+            <th>参数</th>
+            <th>默认值</th>
+            <th>说明</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>containerId</td>
+            <td>必须</td>
+            <td>包裹层</td>
+        </tr>
+        <tr>
+            <td>pageNum</td>
+            <td>1</td>
+            <td>当前页</td>
+        </tr>
+        <tr>
+            <td>totalNumber</td>
+            <td>1</td>
+            <td>总页码</td>
+        </tr>
+        <tr>
+            <td>onPageChangedCallback</td>
+            <td>必选</td>
+            <td>回调函数</td>
+        </tr>
+        <tr>
+            <td>rightSideNum</td>
+            <td>1</td>
+            <td>起始出现页码数</td>
+        </tr>
+        <tr>
+            <td>leftSideNum</td>
+            <td>1</td>
+            <td>结束位置页码数</td>
+        </tr>
+        <tr>
+            <td>pageNumRight</td>
+            <td>2</td>
+            <td>当前页的右边页码数</td>
+        </tr>
+        <tr>
+            <td>pageNumLeft</td>
+            <td>2</td>
+            <td>当前页的左边页码数</td>
+        </tr>
+        <tr>
+            <td>label</td>
+            <td>a</td>
+            <td>页码标签类型</td>
+        </tr>
+        <tr>
+            <td>currentlabel</td>
+            <td>a</td>
+            <td>当前页码标签类型</td>
+        </tr>
+        <tr>
+            <td>nextOrPrevSwitch</td>
+            <td>true</td>
+            <td>是否出现上一页,下一页</td>
+        </tr>
+        <tr>
+            <td>next</td>
+            <td>&gt;</td>
+            <td>上一页标签类型</td>
+        </tr>
+        <tr>
+            <td>prev</td>
+            <td>&lt;</td>
+            <td>下一页标签类型</td>
+        </tr>
+        <tr>
+            <td>homeSwitch</td>
+            <td>true</td>
+            <td>是否出现首页和尾页</td>
+        </tr>
+        <tr>
+            <td>homeBtnVal</td>
+            <td>&lt;&lt;</td>
+            <td>回到首页标签格式</td>
+        </tr>
+        <tr>
+            <td>lastBtnVal</td>
+            <td>&gt;&gt;</td>
+            <td>回到尾页标签格式</td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+<script>
+
+    /*
+     * containerId  //Container Id
+     *
+     * totalNumber, // Total pages
+     *
+     * onPageChangedCallback //callbackfunction
+     *
+     * */
+
+    var Pagination = (function () {
+        var Pagination = function (o) {
+            this.Id                     = o.containerId;
+            this.pageNum                = o.pageNum             || '1';
+            this.totalNum               = o.totalNumber         || '1';
+            this.callBack               = o.onPageChangedCallback;
+            this.rightSideNum           = o.rightSideNum        || '1';
+            this.pageNumRight           = o.pageNumRight        || '2';
+            this.leftSideNum            = o.leftSideNum         || "1";
+            this.pageNumLeft            = o.pageNumLeft         || "2";
+            this.label                  = o.label               || 'a';
+            this.currentLabel           = o.currentlabel        || 'a';
+            this.nextOrPrevWitch        = this.check(o.nextOrPrevSwitch);
+            this.nextBtn                = o.next                || '>';
+            this.prevBtn                = o.prev                || '<';
+            this.homeSwitch             = this.check(o.homeSwitch);
+            this.homeBtnVal             = o.homeBtnVal          || '<<';
+            this.lastBtnVal             = o.lastBtnVal          || '>>';
+            this.setPage(this.pageNum);
+        }
+
+        Pagination.prototype = {
+
+            constructor: Pagination,
+
+            getId: function () {
+
+                return document.getElementById(this.Id);
+
+            },
+
+            check: function (a) {
+                var t = a == true ? true : a == null ? true : false;
+                return t;
+            },
+
+            setPage: function (num) {
+
+                var that = this;
+
+                if (1 < num) {
+
+                    if (this.homeSwitch) {
+
+                        var od = document.createElement(this.label);
+                        od.textContent = this.homeBtnVal;
+                        od.onclick = function () {
+
+                            that.getId().innerHTML = '';
+                            that.callBack && that.callBack(1);
+                            that.setPage(1);
+
+                        }
+
+                        that.getId().appendChild(od);
+
+                    }
+                    if (this.nextOrPrevWitch) {
+
+                        var op = document.createElement(this.label);
+                        op.textContent = this.prevBtn;
+                        op.onclick = function () {
+
+                            that.getId().innerHTML = '';
+                            that.callBack && that.callBack(parseInt(num) - 1);
+                            that.setPage(parseInt(num) - 1);
+
+                        }
+
+                        that.getId().appendChild(op);
+
+                    }
+                }
+
+                for (var i = 0; i < this.totalNum; i++) {
+
+                    var iNum = i + 1,oa;
+
+                    if (iNum == num) {
+
+                        oa = document.createElement(this.currentLabel);
+                        oa.textContent = '[' + iNum + ']';
+                        oa.setAttribute('data-num', iNum);
+
+                    } else if (iNum > 1 + parseInt(this.pageNumLeft) + parseInt(this.pageNumRight) && iNum < parseInt(this.totalNum) - parseInt(this.rightSideNum) + 1 && iNum - parseInt(this.pageNumRight) > num) {
+
+                        if (iNum == this.totalNum - parseInt(this.rightSideNum)) {
+
+                            oa = document.createElement(this.label);
+                            oa.textContent = '...';
+
+                        }
+
+                    } else if (iNum < parseInt(this.totalNum) - parseInt(this.pageNumLeft) - parseInt(this.pageNumRight) && iNum > parseInt(this.leftSideNum) && iNum < num - parseInt(this.pageNumLeft)) {
+
+                        if (iNum == parseInt(this.leftSideNum) + 1) {
+
+                            oa = document.createElement(this.label);
+                            oa.textContent = '...';
+
+                        }
+
+                    } else {
+
+                        oa = document.createElement(this.label);
+                        oa.textContent = iNum;
+                        oa.setAttribute('data-num', iNum);
+
+                    }
+
+                    if (oa.innerHTML != '...') {
+
+                        oa.onclick = function (e) {
+
+                            that.callBack && that.callBack(e.target.getAttribute('data-num'));
+                            that.getId().innerHTML = '';
+                            that.setPage(e.target.getAttribute('data-num'));
+
+                        }
+
+                    }
+
+
+                    this.getId().appendChild(oa);
+
+                }
+                if (num <= parseInt(this.totalNum) - 1) {
+
+                    if (this.nextOrPrevWitch) {
+
+                        var on = document.createElement(this.label);
+                        on.textContent = this.nextBtn;
+                        on.onclick = function () {
+
+                            that.getId().innerHTML = '';
+                            that.setPage(parseInt(num) + 1);
+                            that.callBack && that.callBack(parseInt(num) + 1);
+
+                        }
+
+                        this.getId().appendChild(on);
+
+                    }
+
+                    if (this.homeSwitch) {
+
+                        var oc = document.createElement(this.label);
+                        oc.textContent = this.lastBtnVal;
+                        oc.onclick = function () {
+
+                            that.getId().innerHTML = '';
+                            that.setPage(parseInt(that.totalNum));
+                            that.callBack && that.callBack(parseInt(that.totalNum));
+
+                        }
+
+                        this.getId().appendChild(oc);
+
+                    }
+
+                }
+
+                if (parseInt(this.rightSideNum) == 0 || parseInt(this.leftSideNum) == 0) {
+
+                    var aA = this.getId().getElementsByTagName(this.label);
+                    for (var i = 0, len = aA.length; i < len; i++) {
+
+                        if (aA[i].innerHTML == '...') {
+                            aA[i].style.display = 'none';
+                        }
+
+                    }
+                }
+            }
+        };
+
+        return function (o) {
+            new Pagination(o);
+        }
+
+    })();
+
+
+    window.onload = function () {
+        new Pagination({
+            containerId: 'container0'
+        });
+        new Pagination({
+            containerId: 'container3',
+            totalNumber: '5'
+        });
+        new Pagination({
+            containerId: 'container4',
+            totalNumber: '12'
+        });
+        new Pagination({
+            containerId: 'container5',
+            pageNum    :  '7',
+            totalNumber: '13'
+        });
+        new Pagination({
+            containerId: 'container6',
+            pageNum    :  '25',
+            totalNumber: '25'
+        });
+        new Pagination({
+            containerId: 'container',
+            pageNum: '1',
+            totalNumber: '5',
+            rightSideNum: '3',
+            leftSideNum: '3',
+            pageNumLeft: '2',
+            pageNumRight: '2',
+            nextOrPrevSwitch: false,
+            homeSwitch: false,
+            onPageChangedCallback: function (num) {
+
+            }
+        });
+        new Pagination({
+            containerId: 'container7',
+            pageNum: '1',
+            totalNumber: '12',
+            rightSideNum: '3',
+            leftSideNum: '3',
+            pageNumLeft: '2',
+            pageNumRight: '2',
+            nextOrPrevSwitch: false,
+            homeSwitch: false,
+            onPageChangedCallback: function (num) {
+
+            }
+        });
+       new Pagination({
+            containerId: 'container8',
+            pageNum: '7',
+            totalNumber: '13',
+            rightSideNum: '3',
+            leftSideNum: '3',
+            pageNumLeft: '2',
+            pageNumRight: '2',
+            nextOrPrevSwitch: false,
+            homeSwitch: false,
+            onPageChangedCallback: function (num) {
+                
+            }
+        });
+        new Pagination({
+            containerId: 'container9',
+            pageNum: '13',
+            totalNumber: '13',
+            rightSideNum: '3',
+            leftSideNum: '3',
+            pageNumLeft: '2',
+            pageNumRight: '2',
+            nextOrPrevSwitch: false,
+            homeSwitch: false,
+            onPageChangedCallback: function (num) {
+
+            }
+        });
+        new Pagination({
+            containerId: 'container1',
+            pageNum: '1',
+            totalNumber: '12',
+            rightSideNum: '1',
+            leftSideNum: '1',
+            pageNumLeft: "0",
+            pageNumRight: "4",
+            homeSwitch: false,
+            onPageChangedCallback: function (num) {
+
+            }
+        });
+       new Pagination({
+            containerId: 'container10',
+            pageNum: '5',
+            totalNumber: '12',
+            rightSideNum: '1',
+            leftSideNum: '1',
+            pageNumLeft: "0",
+            pageNumRight: "4",
+            homeSwitch: false,
+            onPageChangedCallback: function (num) {
+
+            }
+        });
+      
+       new Pagination({
+            containerId: 'container11',
+            pageNum: '12',
+            totalNumber: '12',
+            rightSideNum: '1',
+            leftSideNum: '1',
+            pageNumLeft: "0",
+            pageNumRight: "4",
+            homeSwitch: false,
+            onPageChangedCallback: function (num) {
+
+            }
+        });
+      
+        new Pagination({
+            containerId: 'container2',
+            pageNum: '1',
+            totalNumber: '12',
+            rightSideNum: '0',
+            leftSideNum: '0',
+            pageNumLeft: "3",
+            pageNumRight: "3",
+            onPageChangedCallback: function (num) {
+
+            }
+        });
+        new Pagination({
+            containerId: 'container12',
+            pageNum: '7',
+            totalNumber: '12',
+            rightSideNum: '0',
+            leftSideNum: '0',
+            pageNumLeft: "3",
+            pageNumRight: "3",
+            onPageChangedCallback: function (num) {
+
+            }
+        });
+        new Pagination({
+            containerId: 'container13',
+            pageNum: '12',
+            totalNumber: '12',
+            rightSideNum: '0',
+            leftSideNum: '0',
+            pageNumLeft: "3",
+            pageNumRight: "3",
+            onPageChangedCallback: function (num) {
+
+            }
+        });
+    }
+
+
+</script>
+
+</body>
+</html>
